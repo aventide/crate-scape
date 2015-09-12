@@ -1,0 +1,19 @@
+        body {
+            background-color: DEDEDE;
+        }
+        #ai-header {
+            width: 1000px;
+            height: 50px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #ai-center {
+            width: 500px;
+            height: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: #000000;
+            padding: 14px;
+            box-shadow: 0px 0px 20px 3px #d3d3d3;
+            border-radius: 4px;
+        }
