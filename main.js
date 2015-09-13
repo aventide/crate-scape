@@ -293,7 +293,7 @@ function animate() {
 	// drop one or more random blocks.
 	//
 	//
-	if (dropCounter == 100 && dropEnabled) {
+	if (dropCounter == 80 && dropEnabled) {
 
 		dropCounter = 0;
 
