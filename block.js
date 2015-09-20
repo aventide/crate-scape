@@ -251,7 +251,7 @@ function BlockSprite(image, posX, posY) {
 	// ---------------------------
 
 	this.changeType = function (blockImage) {
-		this.sprite.setTexture(PIXI.Texture.fromImage(blockImage));
+		this.sprite.texture = PIXI.Texture.fromImage(blockImage);
 		this.type = blockImage;
 	}
 
@@ -277,7 +277,7 @@ function BlockSprite(image, posX, posY) {
 			randBlock = "./res/sprites/m_block_red.png";
 			break;
 		}
-		this.sprite.setTexture(PIXI.Texture.fromImage(randBlock));
+		this.sprite.texture = PIXI.Texture.fromImage(randBlock);
 		this.type = randBlock;
 	}
 
@@ -294,7 +294,7 @@ function BlockSprite(image, posX, posY) {
 
 		//console.log(blockObject.getStackIn().DY);
 
-		data.originalEvent.preventDefault()
+		//data.originalEvent.preventDefault()
 		// store a reference to the data
 		// The reason for this is because of multitouch
 		// we want to track the movement of this particular touch
@@ -306,8 +306,8 @@ function BlockSprite(image, posX, posY) {
 		//blockObject.DY = 0;
 
 		//this.sx = this.data.getLocalPosition(this).x * this.scale.x;
-		this.sy = this.data.getLocalPosition(this).y * this.scale.y;
-
+		//this.sy = this.data.getLocalPosition(this).y * this.scale.y;
+		this.sy = renderer.plugins.interaction.mouse.global.y * this.scale.y;
 	};
 
 	// set the events for when the mouse is released or a touch is released
@@ -328,7 +328,8 @@ function BlockSprite(image, posX, posY) {
 			var blockObject = allBlocks[stage.getChildIndex(this)];
 
 			// need to get parent coords..
-			var newPosition = this.data.getLocalPosition(this.parent);
+			//var newPosition = this.data.getLocalPosition(this.parent);
+			var newPosition = renderer.plugins.interaction.mouse.global;
 			//blockObject.position.y = newPosition.y;
 			//blockObject.position.y = newPosition.y - this.sy;
 

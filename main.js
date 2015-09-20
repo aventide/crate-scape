@@ -1,13 +1,14 @@
 // create an new instance of a pixi stage
-var stage = new PIXI.Stage(0xCCE6FF);
+var stage = new PIXI.Container();
 
 // create a renderer instance
 var renderer = PIXI.autoDetectRenderer(500, 600);
+renderer.backgroundColor = 0xCCE6FF;
 
 // add renderer to div where it's supposed to go
 document.getElementById('ai-center').appendChild(renderer.view);
 
-requestAnimFrame(animate);
+requestAnimationFrame(animate);
 
 var blockCount = 0;
 var allBlocks = [];
@@ -49,11 +50,9 @@ createRandomBlock(375, 475);
 createRandomBlock(425, 475);
 createRandomBlock(475, 475);
 
-//frameNumber = 0;
-
 
 function animate() {
-	requestAnimFrame(animate);
+	requestAnimationFrame(animate);
 
 	//frameNumber++;
 
@@ -135,8 +134,15 @@ function animate() {
 					// hitting another block
 					else {
 						blockGroup = [];
+						blockAbove = blockPool[i].getDirectBlockAbove();
+						
 						blockGroup.push(blockPool[i]);
-						blockGroup.push(blockPool[i].getDirectBlockAbove());
+							
+						while(blockAbove != undefined){
+							blockGroup.push(blockAbove);
+							blockAbove = blockAbove.getDirectBlockAbove();
+						}
+						
 						createStack(blockGroup, blockPool[i].DY, blockPool[i].launchTime);
 					}
 
@@ -202,7 +208,7 @@ function animate() {
 					}
 					// block is moving up, so carry the momentum upwards
 					else {
-						mergeRisingBlock(stackPool[i].getBottomBlock().getDirectBlockBelow());
+						stackPool[i].mergeRisingBlock(stackPool[i].getBottomBlock().getDirectBlockBelow());
 					}
 				} else {
 					stackPool[i].yShift(stackPool[i].DY);
@@ -227,12 +233,14 @@ function animate() {
 				if (stackPool[i].getTopBlock().getNearestBlockAbove().isFreeBlock() && (stackPool[i].DY * -1) >= yDist) {
 					stackPool[i].yShift(yDist * -1);
 					stackPool[i].mergeFallingBlock(stackPool[i].getTopBlock().getDirectBlockAbove());
+					stackPool[i].yShift(stackPool[i].DY - (yDist * -1));
 				}
 
 				// will hit a stack above
 				else if (!(stackPool[i].getTopBlock().getNearestBlockAbove().isFreeBlock()) && (stackPool[i].DY * -1) >= yDist) {
 					stackPool[i].yShift(yDist * -1);
 					stackPool[i].mergeStack(stackPool[i].getTopBlock().getDirectBlockAbove().getStackIn());
+					stackPool[i].yShift(stackPool[i].DY - (yDist * -1));
 				}
 
 				// no violation will occur
