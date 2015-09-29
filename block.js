@@ -47,12 +47,6 @@ function BlockSprite(image, posX, posY) {
 	// how much longer (in frames) a sprite will remain moving upwards
 	this.launchTime = 0;
 
-	// place for sprite to stop if given a specific place to move towards
-	this.haltPosition = {
-		x : -1,
-		y : -1
-	}
-
 	// set new position on stage for sprite
 	this.setPosition = function (posX, posY) {
 
@@ -333,29 +327,32 @@ function BlockSprite(image, posX, posY) {
 			//blockObject.position.y = newPosition.y;
 			//blockObject.position.y = newPosition.y - this.sy;
 
+			var directBlockAbove = blockObject.getDirectBlockAbove();
+			var directBlockBelow = blockObject.getDirectBlockBelow();
+			
 			// single block launch
-			if ((newPosition.y <= (blockObject.sprite.position.y - 25)) && (blockObject.getDirectBlockAbove() == undefined)) {
+			if ((newPosition.y <= (blockObject.sprite.position.y - 25)) && (directBlockAbove == undefined)) {
 				launchBlock(blockObject, -8, 30);
 			}
 
 			// swapping place with block above this one
-			if ((blockObject.getDirectBlockAbove() != undefined) && (newPosition.y <= (blockObject.getDirectBlockAbove().sprite.position.y))) {
+			if ((directBlockAbove != undefined) && (newPosition.y <= (directBlockAbove.sprite.position.y))) {
 
-				if (blockObject.getStackIn() == undefined && blockObject.getDirectBlockAbove().type == "./res/sprites/m_block_cracked.png") {
+				if (blockObject.getStackIn() == undefined && directBlockAbove.type == "./res/sprites/m_block_cracked.png") {
 					return;
 				}
-				blockObject.swapYWith(blockObject.getDirectBlockAbove());
+				blockObject.swapYWith(directBlockAbove);
 
 			}
 
 			// swapping place with block below this one
-			if ((blockObject.getDirectBlockBelow() != undefined) && (newPosition.y >= (blockObject.getDirectBlockBelow().sprite.position.y))) {
+			if ((directBlockBelow != undefined) && (newPosition.y >= (directBlockBelow.sprite.position.y))) {
 
-				if (blockObject.type == "./res/sprites/m_block_cracked.png" && blockObject.getDirectBlockBelow().getStackIn() == undefined) {
+				if (blockObject.type == "./res/sprites/m_block_cracked.png" && directBlockBelow.getStackIn() == undefined) {
 					return;
 				}
 
-				blockObject.swapYWith(blockObject.getDirectBlockBelow());
+				blockObject.swapYWith(directBlockBelow);
 
 			}
 

@@ -15,6 +15,7 @@ function BlockStack(blockGroup) {
 	// determines whether this stack is allowed to leave the arena
 	this.allowEscape = 1;
 	
+	
 	// merge two blocks into this supposedly new stack
 	// DEPRECATED; for testing only
 	// this.bbJoin = function (block1, block2) {
@@ -23,6 +24,8 @@ function BlockStack(blockGroup) {
 	// blockPool.splice(blockPool.indexOf(block1), 1);
 	// blockPool.splice(blockPool.indexOf(block2), 1);
 	// }
+	
+	
 	// merge a rising free block into this stack
 	this.mergeRisingBlock = function (block) {
 		this.blocks.push(block);

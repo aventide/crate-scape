@@ -9,7 +9,9 @@
   ],
   "main": "./src/index.js",
   "homepage": "http://goodboydigital.com/",
-  "bugs": "https://github.com/GoodBoyDigital/pixi.js/issues",
+  "bugs": {
+    "url": "https://github.com/GoodBoyDigital/pixi.js/issues"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -39,14 +41,15 @@
     "del": "^1.2.0",
     "gulp": "^3.9.0",
     "gulp-cached": "^1.1.0",
-    "gulp-concat": "^2.5.2",
+    "gulp-concat": "^2.6.0",
     "gulp-debug": "^2.0.1",
-    "gulp-jshint": "^1.11.0",
+    "gulp-jshint": "^1.11.2",
     "gulp-mirror": "^0.4.0",
     "gulp-plumber": "^1.0.1",
     "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.0.4",
     "gulp-sourcemaps": "^1.5.2",
-    "gulp-uglify": "^1.2.0",
+    "gulp-uglify": "^1.4.1",
     "gulp-util": "^3.0.5",
     "jaguarjs-jsdoc": "git+https://github.com/davidshimjs/jaguarjs-jsdoc.git",
     "jsdoc": "^3.3.0",
@@ -64,5 +67,11 @@
     "transform": [
       "brfs"
     ]
+  },
+  "bin": {
+    "pixi.js": "pixi.js"
+  },
+  "directories": {
+    "test": "test"
   }
 }

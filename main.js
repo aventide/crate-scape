@@ -54,8 +54,6 @@ createRandomBlock(475, 475);
 function animate() {
 	requestAnimationFrame(animate);
 
-	//frameNumber++;
-
 	// loop through each single block and stack and render stage
 
 
@@ -178,20 +176,24 @@ function animate() {
 			stackPool[i].launchTime--;
 		}
 
+		// pre-calculate bottom and top blocks to avoid running getBottom/TopBlock() multiple times
+			bottomBlock = stackPool[i].getBottomBlock();
+			topBlock = stackPool[i].getTopBlock();
+		
 		// stack is moving downwards
 		if (stackPool[i].DY > 0) {
-
+		
 			// stack is about to hit bottom
-			if ((stackPool[i].getBottomBlock().sprite.position.y + stackPool[i].DY) >= 575) {
-				stackPool[i].yShift(575 - stackPool[i].getBottomBlock().sprite.position.y);
+			if ((bottomBlock.sprite.position.y + stackPool[i].DY) >= 575) {
+				stackPool[i].yShift(575 - bottomBlock.sprite.position.y);
 				stackPool[i].halt();
 				stackPool[i].decay();
 				stackPool.splice(i, 1);
 			}
 			// there are blocks below the stack could hit
-			else if (stackPool[i].getBottomBlock().getBlocksBelow().length > 0) {
+			else if (bottomBlock.getBlocksBelow().length > 0) {
 
-				yDist = (stackPool[i].getBottomBlock().getNearestBlockBelow().sprite.position.y - stackPool[i].getBottomBlock().sprite.position.y) - 50;
+				yDist = (bottomBlock.getNearestBlockBelow().sprite.position.y - bottomBlock.sprite.position.y) - 50;
 
 				// about to hit a block below
 				if (stackPool[i].DY >= yDist) {
@@ -199,7 +201,7 @@ function animate() {
 					stackPool[i].yShift(yDist);
 
 					// block is still, so decay the stack
-					if (stackPool[i].getBottomBlock().getDirectBlockBelow().DY == 0) {
+					if (bottomBlock.getDirectBlockBelow().DY == 0) {
 
 						stackPool[i].halt();
 						stackPool[i].decay();
@@ -208,7 +210,7 @@ function animate() {
 					}
 					// block is moving up, so carry the momentum upwards
 					else {
-						stackPool[i].mergeRisingBlock(stackPool[i].getBottomBlock().getDirectBlockBelow());
+						stackPool[i].mergeRisingBlock(bottomBlock.getDirectBlockBelow());
 					}
 				} else {
 					stackPool[i].yShift(stackPool[i].DY);
@@ -225,21 +227,21 @@ function animate() {
 		else if (stackPool[i].DY < 0) {
 
 			// there is an entity above that could be hit
-			if (stackPool[i].getTopBlock().getBlocksAbove().length > 0) {
+			if (topBlock.getBlocksAbove().length > 0) {
 
 				var yDist = (stackPool[i].getTopBlock().sprite.position.y - stackPool[i].getTopBlock().getNearestBlockAbove().sprite.position.y) - 50;
 
 				// will hit a free block above
-				if (stackPool[i].getTopBlock().getNearestBlockAbove().isFreeBlock() && (stackPool[i].DY * -1) >= yDist) {
+				if (topBlock.getNearestBlockAbove().isFreeBlock() && (stackPool[i].DY * -1) >= yDist) {
 					stackPool[i].yShift(yDist * -1);
-					stackPool[i].mergeFallingBlock(stackPool[i].getTopBlock().getDirectBlockAbove());
+					stackPool[i].mergeFallingBlock(topBlock.getDirectBlockAbove());
 					stackPool[i].yShift(stackPool[i].DY - (yDist * -1));
 				}
 
 				// will hit a stack above
-				else if (!(stackPool[i].getTopBlock().getNearestBlockAbove().isFreeBlock()) && (stackPool[i].DY * -1) >= yDist) {
+				else if (!(topBlock.getNearestBlockAbove().isFreeBlock()) && (stackPool[i].DY * -1) >= yDist) {
 					stackPool[i].yShift(yDist * -1);
-					stackPool[i].mergeStack(stackPool[i].getTopBlock().getDirectBlockAbove().getStackIn());
+					stackPool[i].mergeStack(topBlock.getDirectBlockAbove().getStackIn());
 					stackPool[i].yShift(stackPool[i].DY - (yDist * -1));
 				}
 
@@ -255,8 +257,8 @@ function animate() {
 			}
 
 			// top block pushed out of arena
-			if (stackPool[i].getTopBlock().sprite.position.y <= -25) {
-				temp = stackPool[i].getTopBlock();
+			if (topBlock.sprite.position.y <= -25) {
+				temp = topBlock;
 				stackPool[i].blocks.splice(stackPool[i].blocks.indexOf(temp), 1);
 				removeBlockGlobally(temp);
 
@@ -312,4 +314,5 @@ function animate() {
 	}
 	dropCounter++;
 
+	
 }
