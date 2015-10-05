@@ -281,55 +281,45 @@ function BlockSprite(image, posX, posY) {
 	// begin input handler methods
 	// ---------------------------
 
-	// use the mousedown and touchstart
-	this.sprite.mousedown = this.sprite.touchstart = function (data) {
 
-		var blockObject = allBlocks[stage.getChildIndex(this)];
+	this.sprite.on('mousedown', onDragStart)
+	this.sprite.on('touchstart', onDragStart)
+	// events for drag end
+	this.sprite.on('mouseup', onDragEnd)
+	this.sprite.on('mouseupoutside', onDragEnd)
+	this.sprite.on('touchend', onDragEnd)
+	this.sprite.on('touchendoutside', onDragEnd)
+	// events for drag move
+	this.sprite.on('mousemove', onDragMove)
+	this.sprite.on('touchmove', onDragMove);
 
-		//console.log(blockObject.getStackIn().DY);
-
-		//data.originalEvent.preventDefault()
+	function onDragStart(event) {
 		// store a reference to the data
-		// The reason for this is because of multitouch
+		// the reason for this is because of multitouch
 		// we want to track the movement of this particular touch
-		this.data = data;
+		this.data = event.data;
 		this.alpha = 0.5;
 		this.dragging = true;
+	}
 
-		//blockObject.tempDY = blockObject.DY;
-		//blockObject.DY = 0;
-
-		//this.sx = this.data.getLocalPosition(this).x * this.scale.x;
-		//this.sy = this.data.getLocalPosition(this).y * this.scale.y;
-		this.sy = renderer.plugins.interaction.mouse.global.y * this.scale.y;
-	};
-
-	// set the events for when the mouse is released or a touch is released
-	this.sprite.mouseup = this.sprite.mouseupoutside = this.sprite.touchend = this.sprite.touchendoutside = function (data) {
-		var blockObject = allBlocks[stage.getChildIndex(this)];
-
+	function onDragEnd() {
 		this.alpha = 1;
+
 		this.dragging = false;
+
 		// set the interaction data to null
 		this.data = null;
+	}
 
-	};
-
-	// set the callbacks for when the mouse or a touch moves
-	this.sprite.mousemove = this.sprite.touchmove = function (data) {
+	function onDragMove() {
 		if (this.dragging) {
 
 			var blockObject = allBlocks[stage.getChildIndex(this)];
-
-			// need to get parent coords..
-			//var newPosition = this.data.getLocalPosition(this.parent);
-			var newPosition = renderer.plugins.interaction.mouse.global;
-			//blockObject.position.y = newPosition.y;
-			//blockObject.position.y = newPosition.y - this.sy;
-
 			var directBlockAbove = blockObject.getDirectBlockAbove();
 			var directBlockBelow = blockObject.getDirectBlockBelow();
-			
+
+			var newPosition = this.data.getLocalPosition(this.parent);
+
 			// single block launch
 			if ((newPosition.y <= (blockObject.sprite.position.y - 25)) && (directBlockAbove == undefined)) {
 				launchBlock(blockObject, -8, 30);
@@ -359,7 +349,8 @@ function BlockSprite(image, posX, posY) {
 		}
 	}
 
-	// ---------------------------
-	// end input handler methods
+
+// ---------------------------
+// end input handler methods
 
 }

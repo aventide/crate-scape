@@ -1,4 +1,4 @@
-// create an new instance of a pixi stage
+// create an new instance of a pixi scene graph
 var stage = new PIXI.Container();
 
 // create a renderer instance

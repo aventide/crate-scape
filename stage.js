@@ -1,6 +1,3 @@
-
-
-
 // create BlockSprite object and add resulting sprite to stage
 function createBlock(image, posX, posY) {
 	allBlocks.push(new BlockSprite(image, posX, posY));
@@ -86,3 +83,8 @@ function removeBlockGlobally(block){
 		}
 	}
 }
+
+// methods for movement
+
+
+
