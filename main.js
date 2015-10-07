@@ -276,24 +276,58 @@ function animate() {
 		}
 
 	}
-
+	
+	var blocksToLaunch = [];
 	for (var i = 0; i < allBlocks.length; i++) {
 
-		// horizontal matching 3 in a row, first come first served
+		// get neighboring blocks
 		var leftNeighbor = allBlocks[i].getDirectBlockLeft();
 		var rightNeighbor = allBlocks[i].getDirectBlockRight();
-
-		if (leftNeighbor != undefined && leftNeighbor.type == allBlocks[i].type && rightNeighbor != undefined && rightNeighbor.type == allBlocks[i].type && allBlocks[i].type != "./res/sprites/m_block_cracked.png") {
-
-			leftNeighbor.changeType("./res/sprites/m_block_cracked.png");
-			allBlocks[i].changeType("./res/sprites/m_block_cracked.png");
-			rightNeighbor.changeType("./res/sprites/m_block_cracked.png");
-
-			launchBlock(leftNeighbor, -4, 100);
-			launchBlock(allBlocks[i], -4, 100);
-			launchBlock(rightNeighbor, -4, 100);
-
+		var belowNeighbor = allBlocks[i].getDirectBlockBelow();
+		var aboveNeighbor = allBlocks[i].getDirectBlockAbove();
+		
+		// if block is a destroyed block, ignore it
+		if(allBlocks[i].type == "./res/sprites/m_block_cracked.png"){
+			continue;
 		}
+		
+		// block has neighbors to both sides
+		if (leftNeighbor != undefined && rightNeighbor != undefined){
+			
+			// 3 matching blocks horizontally
+			if(leftNeighbor.type == allBlocks[i].type && rightNeighbor.type == allBlocks[i].type){
+				blocksToLaunch.push(leftNeighbor);
+				blocksToLaunch.push(allBlocks[i]);
+				blocksToLaunch.push(rightNeighbor);
+				
+				// if additional left or right blocks match, launch them too
+				var tempLeft = leftNeighbor.getDirectBlockLeft();
+				var tempRight = rightNeighbor.getDirectBlockRight();
+				if(tempLeft != undefined && tempLeft.type == allBlocks[i].type){
+					blocksToLaunch.push(tempLeft);
+				}
+				if(tempRight != undefined && tempRight.type == allBlocks[i].type){
+					blocksToLaunch.push(tempRight);
+				}
+			}
+		}
+		
+		// block has neighbors above and below
+		if(belowNeighbor != undefined && aboveNeighbor != undefined){
+			
+			// 3 matching blocks vertically
+			if(belowNeighbor.type == allBlocks[i].type && aboveNeighbor.type == allBlocks[i].type){
+				blocksToLaunch.push(belowNeighbor);
+				blocksToLaunch.push(allBlocks[i]);
+				blocksToLaunch.push(aboveNeighbor);
+			}
+		}
+
+	}
+	
+	for(var i = 0; i < blocksToLaunch.length; i++){
+		blocksToLaunch[i].changeType("./res/sprites/m_block_cracked.png");
+		launchBlock(blocksToLaunch[i], -4, 100);
 	}
 
 	// render the stage
