@@ -47,6 +47,9 @@ function BlockSprite(image, posX, posY) {
 	// how much longer (in frames) a sprite will remain moving upwards
 	this.launchTime = 0;
 
+	// whether to skip block to resolve asynchronous call problems
+	this.skipCycle = 0;
+	
 	// set new position on stage for sprite
 	this.setPosition = function (posX, posY) {
 
@@ -259,7 +262,7 @@ function BlockSprite(image, posX, posY) {
 			randBlock = "./res/sprites/m_block_tangerine.png";
 			break;
 		case 2:
-			randBlock = "./res/sprites/m_block_yellow.png";
+			randBlock = "./res/sprites/m_block_green.png";
 			break;
 		case 3:
 			randBlock = "./res/sprites/m_block_blue.png";
@@ -319,9 +322,9 @@ function BlockSprite(image, posX, posY) {
 			var directBlockBelow = blockObject.getDirectBlockBelow();
 
 			var newPosition = this.data.getLocalPosition(this.parent);
-
+			
 			// single block launch
-			if ((newPosition.y <= (blockObject.sprite.position.y - 25)) && (directBlockAbove == undefined)) {
+			if ((newPosition.y <= (blockObject.sprite.position.y - 25)) && (blockObject.getDirectBlockAbove() === undefined)) {
 				launchBlock(blockObject, -8, 30);
 			}
 

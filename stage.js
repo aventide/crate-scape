@@ -19,7 +19,7 @@ function createRandomBlock(posX, posY) {
 		randBlock = "./res/sprites/m_block_tangerine.png";
 		break;
 	case 2:
-		randBlock = "./res/sprites/m_block_yellow.png";
+		randBlock = "./res/sprites/m_block_green.png";
 		break;
 	case 3:
 		randBlock = "./res/sprites/m_block_blue.png";
@@ -37,6 +37,7 @@ function createRandomBlock(posX, posY) {
 }
 
 function createStack(blockGroup, launchSpeed, launchTime){
+	//console.log("stack " + stackPool.length + " created.");
 	newStack = new BlockStack(blockGroup);
 	newStack.DY = launchSpeed;
 	newStack.launchTime = launchTime;
@@ -56,9 +57,13 @@ function getBlockAt(posX, posY) {
 	}
 }
 
-// launch single block
+// launch block
 function launchBlock(launchBlock, launchSpeed, launchTime) {
 	launchBlock.DY = launchSpeed;
+	// add onto stack speed if already launching
+	//if(launchBlock.getStackIn() !== undefined){
+	//	launchBlock.DY = launchSpeed + launchBlock.getStackIn().DY;
+	//}
 	launchBlock.launchTime = launchTime;
 	launchBlock.launching = 1;
 }
@@ -82,6 +87,14 @@ function removeBlockGlobally(block){
 			allBlocks.splice(i, 1);
 		}
 	}
+}
+
+function testLaunchBlocks(){
+	
+	for(var i = 25; i < 525; i += 50){
+		launchBlock(getBlockAt(i, 575), -4, 100);
+	}
+	
 }
 
 // methods for movement

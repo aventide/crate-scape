@@ -8,7 +8,7 @@ renderer.backgroundColor = 0xCCE6FF;
 // add renderer to div where it's supposed to go
 document.getElementById('ai-center').appendChild(renderer.view);
 
-requestAnimationFrame(animate);
+window.onload = function(){requestAnimationFrame(animate);};
 
 var blockCount = 0;
 var allBlocks = [];
@@ -16,6 +16,14 @@ var blockPool = [];
 var stackPool = [];
 
 var dropCounter = 0;
+
+// backgroundTexture = PIXI.Texture.fromImage("./res/sprites/black_metal_background.png");
+// backgroundSprite = new PIXI.Sprite(backgroundTexture);
+// backgroundSprite.position.y = 300;
+// backgroundSprite.position.x = 250;
+// backgroundSprite.anchor.x = 0.5;
+// backgroundSprite.anchor.y = 0.5;
+// stage.addChild(backgroundSprite);
 
 createRandomBlock(25, 575);
 createRandomBlock(75, 575);
@@ -50,12 +58,19 @@ createRandomBlock(375, 475);
 createRandomBlock(425, 475);
 createRandomBlock(475, 475);
 
+var counter = 0;
 
 function animate() {
 	requestAnimationFrame(animate);
 
+	if(counter >= 50){
+		counter = 0;
+	}
+	else{
+		counter++;
+	}
+	
 	// loop through each single block and stack and render stage
-
 
 	// loop through single blocks
 	for (var i = 0; i < blockPool.length; i++) {
@@ -112,7 +127,11 @@ function animate() {
 
 		// block is moving upwards
 		else if (blockPool[i].DY < 0) {
-
+			
+			if(blockPool[i].launchTime == 99){
+				console.log("block: " + i + ": frame ", counter);
+			}
+		
 			// there is another block above that could be hit
 			if (blockPool[i].getBlocksAbove().length > 0) {
 
@@ -127,7 +146,11 @@ function animate() {
 					// if hitting a stack
 					if (blockPool[i].getDirectStackAbove() != undefined) {
 						tempStack = blockPool[i].getDirectStackAbove();
+						var stackPoolSize = stackPool.length;
 						tempStack.mergeRisingBlock(blockPool[i]);
+						if (stackPoolSize > stackPool.length){
+							i--;
+						}
 					}
 					// hitting another block
 					else {
@@ -163,9 +186,8 @@ function animate() {
 				blockPool[i].DY = defaultGravity;
 			}
 		}
+		
 	}
-
-	iter = 0;
 
 	// loop through stacks
 	for (var i = 0; i < stackPool.length; i++) {
@@ -210,7 +232,11 @@ function animate() {
 					}
 					// block is moving up, so carry the momentum upwards
 					else {
+						var stackPoolSize = stackPool.length;
 						stackPool[i].mergeRisingBlock(bottomBlock.getDirectBlockBelow());
+						if (stackPoolSize > stackPool.length){
+							i--;
+						}
 					}
 				} else {
 					stackPool[i].yShift(stackPool[i].DY);
@@ -229,7 +255,7 @@ function animate() {
 			// there is an entity above that could be hit
 			if (topBlock.getBlocksAbove().length > 0) {
 
-				var yDist = (stackPool[i].getTopBlock().sprite.position.y - stackPool[i].getTopBlock().getNearestBlockAbove().sprite.position.y) - 50;
+				var yDist = (topBlock.sprite.position.y - topBlock.getNearestBlockAbove().sprite.position.y) - 50;
 
 				// will hit a free block above
 				if (topBlock.getNearestBlockAbove().isFreeBlock() && (stackPool[i].DY * -1) >= yDist) {
@@ -241,7 +267,11 @@ function animate() {
 				// will hit a stack above
 				else if (!(topBlock.getNearestBlockAbove().isFreeBlock()) && (stackPool[i].DY * -1) >= yDist) {
 					stackPool[i].yShift(yDist * -1);
+					// mergeStack is being given a non-stack....wtf....
 					stackPool[i].mergeStack(topBlock.getDirectBlockAbove().getStackIn());
+					//console.log(topBlock.getDirectBlockAbove().getStackIn());
+					// compensate index due to splicing array
+					i--;
 					stackPool[i].yShift(stackPool[i].DY - (yDist * -1));
 				}
 
@@ -279,7 +309,7 @@ function animate() {
 	
 	var blocksToLaunch = [];
 	for (var i = 0; i < allBlocks.length; i++) {
-
+	
 		// get neighboring blocks
 		var leftNeighbor = allBlocks[i].getDirectBlockLeft();
 		var rightNeighbor = allBlocks[i].getDirectBlockRight();
@@ -327,7 +357,8 @@ function animate() {
 	
 	for(var i = 0; i < blocksToLaunch.length; i++){
 		blocksToLaunch[i].changeType("./res/sprites/m_block_cracked.png");
-		launchBlock(blocksToLaunch[i], -4, 100);
+	//	launchBlock(blocksToLaunch[i], -4, 100);
+	        launchBlock(blocksToLaunch[i], -4, 100);
 	}
 
 	// render the stage
@@ -336,8 +367,8 @@ function animate() {
 	// if at counter threshold/randomvalue,
 	// drop one or more random blocks.
 	//
-	//
-	if (dropCounter == 80 && dropEnabled) {
+	//80
+	if (dropCounter == 20 && dropEnabled) {
 
 		dropCounter = 0;
 
